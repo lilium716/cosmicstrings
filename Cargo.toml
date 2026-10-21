@@ -4,3 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+num-complex = "0.4"
+# tensor4all-rs は crates.io 未公開のため git 依存。再現性のためコミットを固定している。
+tensor4all-quanticstci = { git = "https://github.com/tensor4all/tensor4all-rs", rev = "25420b44e00897749ce06f7fe5bb0dbb62923fba" }
+tensor4all-simplett = { git = "https://github.com/tensor4all/tensor4all-rs", rev = "25420b44e00897749ce06f7fe5bb0dbb62923fba" }

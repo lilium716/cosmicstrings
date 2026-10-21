@@ -43,10 +43,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let out = Path::new(&out_dir);
     fs::create_dir_all(out)?;
 
-    // 格子: 両端を含む nx 点。端の点は境界値として固定する
-    let nx: usize = 513;
+    // 格子: x = iΔx − L/2（i = 0, …, nx − 1）の nx 点。QTT 化のため 2 のべきにする。
+    // 両端の点（i = 0 と nx − 1）は境界値として固定する
+    let nx: usize = 512;
     let length: f64 = 64.0;
-    let dx = length / (nx - 1) as f64;
+    let dx = length / nx as f64;
     let dt = 0.2 * dx;
     let tau_initial: f64 = 20.0;
     let tau_end: f64 = 60.0;
