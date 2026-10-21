@@ -1,0 +1,19 @@
+# Rust のビルド生成物
+/target/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# 実験の出力と図（コマンドとメモだけを git で管理する）
+/experiments/*/data/
+/experiments/*/figures/
+
+# 手元用の文書（研究ログ・報告書）
+/docs/
+
+# エディタ・OS
+.vscode/
+.DS_Store
