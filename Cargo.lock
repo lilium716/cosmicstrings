@@ -98,6 +98,11 @@ name = "cosmicstrings"
 version = "0.1.0"
 dependencies = [
  "num-complex",
+ "rayon",
+ "tenferro-ad",
+ "tenferro-cpu",
+ "tenferro-runtime",
+ "tenferro-tensor",
  "tensor4all-quanticstci",
  "tensor4all-simplett",
 ]

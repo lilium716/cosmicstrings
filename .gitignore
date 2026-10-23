@@ -7,9 +7,10 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 
-# 実験の出力と図（コマンドとメモだけを git で管理する）
+# 実験の出力（git で管理しない）。図は PNG だけを管理する
 /experiments/*/data/
-/experiments/*/figures/
+/experiments/*/figures/*
+!/experiments/*/figures/*.png
 
 # 手元用の文書（研究ログ・報告書）
 /docs/
