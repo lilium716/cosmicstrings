@@ -4,7 +4,8 @@
 
 Δx と座標の取り方が同じなので、箱 32 の領域では両者の格子点がぴったり重なる。
 - 組み換えの時刻（ひもの位置の塊の種類が A, B から up, down に変わる時刻）
-- z = 0 の断面での |φ_512 − φ_256| の最大値（中心付近 |x|, |y| < 8 と、箱 32 全体）
+- z = 0 の断面での |φ_512 − φ_256| の最大値（箱 32 の壁の影響が光速で届いていない領域
+  |x|, |y| < 16 − (τ − τ_i) − 1、中心付近 |x|, |y| < 8、箱 32 全体）
 を表示し、差の時間変化を figures/box_size.png に描く。
 箱 32 の壁の影響は光速で伝わるので、中心（壁から 16）には τ = 36 まで届かないはずである。
 """
@@ -47,7 +48,8 @@ grid = np.arange(n_small) * ps["dx"] - ps["length"] / 2 - ps["center_offset"]
 center = (np.abs(grid)[None, :] < 8) & (np.abs(grid)[:, None] < 8)
 
 print(f"組み換えの時刻（中心付近 r < 1 からひもが消えた最初の出力時刻）: 512³ τ = {reconnection_tau(big)}, 256³ τ = {reconnection_tau(small)}")
-taus, d_center, d_all = [], [], []
+X, Y = np.meshgrid(grid, grid)
+taus, d_causal, d_center, d_all = [], [], [], []
 snaps_small = {round(float(r["tau"]), 6): int(r["index"]) for r in csv.DictReader(open(small / "snapshots.csv"))}
 for r in csv.DictReader(open(big / "snapshots.csv")):
     tau = round(float(r["tau"]), 6)
@@ -57,11 +59,18 @@ for r in csv.DictReader(open(big / "snapshots.csv")):
     b = np.load(small / f"slice_z_{snaps_small[tau]:04d}.npy")
     diff = np.abs(a - b)
     taus.append(tau)
+    reach = ps["length"] / 2 - (tau - ps["tau_initial"]) - 1.0
+    inside = (np.abs(X) < reach) & (np.abs(Y) < reach)
+    d_causal.append(diff[inside].max() if inside.any() else np.nan)
     d_center.append(diff[center].max())
     d_all.append(diff.max())
-    print(f"τ = {tau:5.1f}: z = 0 断面の差の最大値  中心 |x|,|y| < 8: {d_center[-1]:.1e}   箱 32 全体: {d_all[-1]:.1e}")
+    print(
+        f"τ = {tau:5.1f}: z = 0 断面の差の最大値  壁の影響が届いていない領域: {d_causal[-1]:.1e}"
+        f"   中心 |x|,|y| < 8: {d_center[-1]:.1e}   箱 32 全体: {d_all[-1]:.1e}"
+    )
 
 fig, ax = plt.subplots(figsize=(6.5, 4))
+ax.semilogy(taus, d_causal, "^-", label="outside the light cone of the box-32 walls")
 ax.semilogy(taus, d_center, "o-", label="center |x|, |y| < 8")
 ax.semilogy(taus, d_all, "s-", label="whole box-32 region")
 ax.set_xlabel("conformal time τ")
